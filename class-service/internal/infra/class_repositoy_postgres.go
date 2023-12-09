@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/google/uuid"
 	"github.com/iamrosada/easy-life-server/class-service/internal/entity"
 	_ "gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -21,8 +20,7 @@ func NewClassRepositoryPostgres(db *gorm.DB) *ClassRepositoryPostgres {
 func (r *ClassRepositoryPostgres) Create(class *entity.Class) error {
 	// Iterate through each student ID and create a new class for each
 	createdNewClass := entity.Class{
-		ID:            uuid.New().String(),
-		ClassID:       class.ID,
+		ID:            class.ID,
 		TitleOfLesson: class.TitleOfLesson,
 		Description:   class.Description,
 		TeacherID:     class.TeacherID,

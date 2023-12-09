@@ -20,8 +20,8 @@ type Serializable interface {
 }
 type StudentsIDs []string
 type Class struct {
-	ID            string      `json:"id"`
-	ClassID       string      `json:"class_id"`
+	ID string `json:"id"`
+	// ClassID       string      `json:"class_id"`
 	TitleOfLesson string      `json:"title_of_lesson"`
 	Description   string      `json:"description"`
 	TeacherID     string      `json:"teacher_id"`
