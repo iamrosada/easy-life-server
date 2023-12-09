@@ -15,11 +15,12 @@ type TeacherRepository interface {
 	DeleteByID(id string) error
 	GetByID(id string) (*Teacher, error)
 }
+
 type Teacher struct {
 	ID             string `gorm:"primaryKey"`
-	Name           string
-	CourseLanguage string
-	IsActive       bool
+	Name           string `json:"name"`
+	CourseLanguage string `json:"course_language"`
+	IsActive       bool   `json:"is_active"`
 }
 
 func NewTeacher(name, course_language string, is_active bool) *Teacher {

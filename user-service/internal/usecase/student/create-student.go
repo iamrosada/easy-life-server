@@ -9,11 +9,11 @@ type CreateStudentInputDto struct {
 }
 
 type CreateStudentOutputDto struct {
-	ID         string         `json:"id"`
-	Name       string         `json:"name"`
-	FulName    string         `json:"full_name"`
-	CourseName string         `json:"course_name"`
-	Teacher    entity.Teacher `json:"teacher_ids"`
+	ID         string           `json:"id"`
+	Name       string           `json:"name"`
+	FulName    string           `json:"full_name"`
+	CourseName string           `json:"course_name"`
+	Teachers   []entity.Teacher `json:"teacher_ids"`
 }
 type CreateStudentUseCase struct {
 	StudentRepository entity.StudentRepository
@@ -27,9 +27,9 @@ func NewCreateStudentUseCase(StudentRepository entity.StudentRepository) *Create
 func (u *CreateStudentUseCase) Execute(input CreateStudentInputDto) (*CreateStudentOutputDto, error) {
 
 	Student := entity.NewStudent(
-		input.CourseName,
-		input.FullName,
 		input.Name,
+		input.FullName,
+		input.CourseName,
 	)
 
 	err := u.StudentRepository.Create(Student)
@@ -43,5 +43,6 @@ func (u *CreateStudentUseCase) Execute(input CreateStudentInputDto) (*CreateStud
 		FulName:    Student.FullName,
 		Name:       Student.Name,
 		CourseName: Student.CourseName,
+		Teachers:   Student.Teachers,
 	}, nil
 }

@@ -15,11 +15,11 @@ type StudentRepository interface {
 }
 
 type Student struct {
-	ID         string
-	Name       string
-	FullName   string
-	CourseName string
-	TeacherID  string
+	ID         string `json:"id"`
+	Name       string `json:"name"`
+	FullName   string `json:"full_name"`
+	CourseName string `json:"course_language"`
+	TeacherID  string `json:"teacher_id"`
 	// Teachers   Teacher `gorm:"foreignKey:TeacherID"`
 	Teachers []Teacher `gorm:"many2many:student_teachers;"`
 }

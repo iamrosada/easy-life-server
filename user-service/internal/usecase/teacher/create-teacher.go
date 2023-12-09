@@ -26,8 +26,8 @@ func NewCreateTeacherUseCase(TeacherRepository entity.TeacherRepository) *Create
 func (u *CreateTeacherUseCase) Execute(input CreateTeacherInputDto) (*CreateTeacherOutputDto, error) {
 
 	Teacher := entity.NewTeacher(
-		input.CourseLanguage,
 		input.Name,
+		input.CourseLanguage,
 		input.IsActive,
 	)
 
