@@ -34,7 +34,7 @@ func NewStudentHandlers(
 func (p *StudentHandlers) SetupRoutes(router *gin.Engine) {
 	api := router.Group("/api")
 	{
-		Students := api.Group("/Students")
+		Students := api.Group("/students")
 		{
 			Students.POST("/", p.CreateStudentHandler)
 			Students.GET("/", p.ListStudentsHandler)

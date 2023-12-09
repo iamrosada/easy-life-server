@@ -70,7 +70,7 @@ func main() {
 	ClassHandlers.SetupRoutes(router)
 
 	// Start the server
-	err = http.ListenAndServe(":8000", router)
+	err = http.ListenAndServe(":8080", router)
 	if err != nil {
 		fmt.Println(err)
 	}

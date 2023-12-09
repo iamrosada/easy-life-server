@@ -1,6 +1,8 @@
 package entity
 
 import (
+	"database/sql/driver"
+	"encoding/json"
 	"errors"
 
 	"github.com/google/uuid"
@@ -14,7 +16,7 @@ type TeacherRepository interface {
 	GetByID(id string) (*Teacher, error)
 }
 type Teacher struct {
-	ID             string
+	ID             string `gorm:"primaryKey"`
 	Name           string
 	CourseLanguage string
 	IsActive       bool
@@ -60,4 +62,20 @@ func (r *InMemoryTeacherRepository) FindAll() ([]*Teacher, error) {
 		allTeachers = append(allTeachers, Teacher)
 	}
 	return allTeachers, nil
+}
+
+func (t Teacher) Value() (driver.Value, error) {
+	return json.Marshal(t)
+}
+
+// Scan implements the sql.Scanner interface.
+func (t *Teacher) Scan(value interface{}) error {
+	if value == nil {
+		return nil
+	}
+	data, ok := value.([]byte)
+	if !ok {
+		return errors.New("Invalid scan type for Teacher")
+	}
+	return json.Unmarshal(data, t)
 }

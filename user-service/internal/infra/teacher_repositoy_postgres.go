@@ -14,20 +14,20 @@ func NewTeacherRepositoryPostgres(db *gorm.DB) *TeacherRepositoryPostgres {
 	return &TeacherRepositoryPostgres{DB: db}
 }
 
-func (r *TeacherRepositoryPostgres) Create(Teacher *entity.Teacher) error {
-	return r.DB.Create(Teacher).Error
+func (r *TeacherRepositoryPostgres) Create(teacher *entity.Teacher) error {
+	return r.DB.Create(teacher).Error
 }
 
 func (r *TeacherRepositoryPostgres) FindAll() ([]*entity.Teacher, error) {
-	var Teachers []*entity.Teacher
-	if err := r.DB.Find(&Teachers).Error; err != nil {
+	var teachers []*entity.Teacher
+	if err := r.DB.Find(&teachers).Error; err != nil {
 		return nil, err
 	}
-	return Teachers, nil
+	return teachers, nil
 }
 
-func (r *TeacherRepositoryPostgres) Update(Teacher *entity.Teacher) error {
-	return r.DB.Save(Teacher).Error
+func (r *TeacherRepositoryPostgres) Update(teacher *entity.Teacher) error {
+	return r.DB.Save(teacher).Error
 }
 
 func (r *TeacherRepositoryPostgres) DeleteByID(id string) error {
@@ -35,9 +35,9 @@ func (r *TeacherRepositoryPostgres) DeleteByID(id string) error {
 }
 
 func (r *TeacherRepositoryPostgres) GetByID(id string) (*entity.Teacher, error) {
-	var Teacher entity.Teacher
-	if err := r.DB.Where("id = ?", id).First(&Teacher).Error; err != nil {
+	var teacher entity.Teacher
+	if err := r.DB.Where("id = ?", id).First(&teacher).Error; err != nil {
 		return nil, err
 	}
-	return &Teacher, nil
+	return &teacher, nil
 }

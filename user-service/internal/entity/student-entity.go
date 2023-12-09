@@ -19,7 +19,9 @@ type Student struct {
 	Name       string
 	FullName   string
 	CourseName string
-	Teacher    Teacher
+	TeacherID  string
+	// Teachers   Teacher `gorm:"foreignKey:TeacherID"`
+	Teachers []Teacher `gorm:"many2many:student_teachers;"`
 }
 
 func NewStudent(name, full_name, course_name string) *Student {
