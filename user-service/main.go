@@ -56,6 +56,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	// Callback functions for serialization and deserialization
+	gormDB.Callback().Create().Before("gorm:before_create").Register("serializeTeachersIDs", serializeCodes)
+	gormDB.Callback().Query().After("gorm:after_query").Register("deserializeTeachersIDs", deserializeCodes)
+
 	// Create repositories and use cases
 	StudentRepository := repository.NewStudentRepositoryPostgres(gormDB)
 	createStudentUsecase := student.NewCreateStudentUseCase(StudentRepository)
@@ -87,5 +91,17 @@ func main() {
 	err = http.ListenAndServe(":8000", router)
 	if err != nil {
 		fmt.Println(err)
+	}
+}
+
+func serializeCodes(db *gorm.DB) {
+	if serializable, ok := db.Statement.Dest.(entity.Serializable); ok {
+		serializable.BeforeSave()
+	}
+}
+
+func deserializeCodes(db *gorm.DB) {
+	if serializable, ok := db.Statement.Dest.(entity.Serializable); ok {
+		serializable.AfterFind()
 	}
 }

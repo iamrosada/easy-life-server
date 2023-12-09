@@ -7,11 +7,11 @@ type GetStudentByIDInputputDto struct {
 }
 
 type GetStudentByIDOutputDto struct {
-	ID         string           `json:"id"`
-	Name       string           `json:"name"`
-	FullName   string           `json:"full_name"`
-	CourseName string           `json:"course_name"`
-	Teachers   []entity.Teacher `json:"teacher_ids"`
+	ID          string   `json:"id"`
+	Name        string   `json:"name"`
+	FullName    string   `json:"full_name"`
+	CourseName  string   `json:"course_name"`
+	TeachersIDs []string `json:"teachers_ids"`
 }
 type GetStudentByIDUseCase struct {
 	StudentRepository entity.StudentRepository
@@ -27,11 +27,11 @@ func (u *GetStudentByIDUseCase) Execute(input GetStudentByIDInputputDto) (*GetSt
 		return nil, err
 	}
 	return &GetStudentByIDOutputDto{
-		ID:         Student.ID,
-		FullName:   Student.FullName,
-		Name:       Student.Name,
-		CourseName: Student.CourseName,
-		Teachers:   Student.Teachers,
+		ID:          Student.ID,
+		FullName:    Student.FullName,
+		Name:        Student.Name,
+		CourseName:  Student.CourseName,
+		TeachersIDs: Student.TeachersIDs,
 	}, nil
 
 }

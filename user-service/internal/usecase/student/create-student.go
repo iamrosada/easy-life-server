@@ -3,17 +3,18 @@ package student
 import "github.com/iamrosada/easy-life-server/user-server/internal/entity"
 
 type CreateStudentInputDto struct {
-	Name       string `json:"name"`
-	FullName   string `json:"full_name"`
-	CourseName string `json:"course_name"`
+	Name        string   `json:"name"`
+	FullName    string   `json:"full_name"`
+	CourseName  string   `json:"course_name"`
+	TeachersIDs []string `json:"teachers_ids"`
 }
 
 type CreateStudentOutputDto struct {
-	ID         string           `json:"id"`
-	Name       string           `json:"name"`
-	FulName    string           `json:"full_name"`
-	CourseName string           `json:"course_name"`
-	Teachers   []entity.Teacher `json:"teacher_ids"`
+	ID          string   `json:"id"`
+	Name        string   `json:"name"`
+	FullName    string   `json:"full_name"` // Corrected field name
+	CourseName  string   `json:"course_name"`
+	TeachersIDs []string `json:"teachers_ids"`
 }
 type CreateStudentUseCase struct {
 	StudentRepository entity.StudentRepository
@@ -39,10 +40,10 @@ func (u *CreateStudentUseCase) Execute(input CreateStudentInputDto) (*CreateStud
 	}
 
 	return &CreateStudentOutputDto{
-		ID:         Student.ID,
-		FulName:    Student.FullName,
-		Name:       Student.Name,
-		CourseName: Student.CourseName,
-		Teachers:   Student.Teachers,
+		ID:          Student.ID,
+		FullName:    Student.FullName,
+		Name:        Student.Name,
+		CourseName:  Student.CourseName,
+		TeachersIDs: input.TeachersIDs,
 	}, nil
 }

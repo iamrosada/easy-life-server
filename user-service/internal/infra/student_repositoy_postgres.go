@@ -1,6 +1,9 @@
 package repository
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/iamrosada/easy-life-server/user-server/internal/entity"
 	_ "gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -14,8 +17,35 @@ func NewStudentRepositoryPostgres(db *gorm.DB) *StudentRepositoryPostgres {
 	return &StudentRepositoryPostgres{DB: db}
 }
 
-func (r *StudentRepositoryPostgres) Create(Student *entity.Student) error {
-	return r.DB.Create(Student).Error
+func (r *StudentRepositoryPostgres) Create(student *entity.Student) error {
+	// Ensure unique teacher IDs
+	teacherMap := make(map[string]bool)
+	for _, teacherID := range student.TeachersIDs {
+		lowercaseID := strings.ToLower(teacherID)
+
+		if _, exists := teacherMap[lowercaseID]; exists {
+			return fmt.Errorf("duplicate teacher ID found: %s", teacherID)
+		}
+
+		teacherMap[lowercaseID] = true
+
+		newStudent := entity.Student{
+			ID:          student.ID, // Generate a new UUID for the student ID
+			TeachersIDs: []string{teacherID},
+			Name:        student.Name,
+			CourseName:  student.CourseName,
+		}
+
+		// Create the student record in the database
+		if err := r.DB.Create(&newStudent).Error; err != nil {
+			return err
+		}
+
+	}
+
+	// Create the student
+
+	return nil
 }
 
 func (r *StudentRepositoryPostgres) FindAll() ([]*entity.Student, error) {
