@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/google/uuid"
 	"github.com/iamrosada/easy-life-server/user-server/internal/entity"
 	_ "gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -18,42 +19,71 @@ func NewStudentRepositoryPostgres(db *gorm.DB) *StudentRepositoryPostgres {
 }
 
 func (r *StudentRepositoryPostgres) Create(student *entity.Student) error {
-	// Ensure unique teacher IDs
-	teacherMap := make(map[string]bool)
-	for _, teacherID := range student.TeachersIDs {
-		lowercaseID := strings.ToLower(teacherID)
 
-		if _, exists := teacherMap[lowercaseID]; exists {
-			return fmt.Errorf("duplicate teacher ID found: %s", teacherID)
+	fmt.Println("Debug information:", student.ID)
+
+	studentMap := make(map[string]bool)
+	for _, teacherIDsValue := range student.TeachersIDs {
+		lowercaseStudent := strings.ToLower(teacherIDsValue)
+
+		if _, exists := studentMap[lowercaseStudent]; exists {
+			return fmt.Errorf("duplicate code found: %s", teacherIDsValue)
 		}
 
-		teacherMap[lowercaseID] = true
+		studentMap[lowercaseStudent] = true
 
-		newStudent := entity.Student{
-			ID:          student.ID, // Generate a new UUID for the student ID
-			TeachersIDs: []string{teacherID},
+		student := entity.Student{
+			ID:          uuid.New().String(),
+			StudentID:   student.ID,
+			TeachersIDs: []string{teacherIDsValue},
+			FullName:    student.FullName,
 			Name:        student.Name,
 			CourseName:  student.CourseName,
 		}
 
-		// Create the student record in the database
-		if err := r.DB.Create(&newStudent).Error; err != nil {
+		if err := r.DB.Create(&student).Error; err != nil {
 			return err
 		}
-
 	}
-
-	// Create the student
 
 	return nil
 }
 
+// func (r *StudentRepositoryPostgres) FindAll() ([]*entity.Student, error) {
+// 	var students []*entity.Student
+// 	var teachers_ids []string
+// 	err := r.DB.Table("student").Select("teachers_ids").Pluck("teachers_ids", &teachers_ids).Error
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	if err := r.DB.Select("id", "name", "student_id", "full_name", "course_name").Find(&students).Error; err != nil {
+// 		return nil, err
+// 	}
+
+//		return students, nil
+//	}
+
 func (r *StudentRepositoryPostgres) FindAll() ([]*entity.Student, error) {
-	var Students []*entity.Student
-	if err := r.DB.Find(&Students).Error; err != nil {
+	var students []*entity.Student
+
+	// Fetching teachers_ids for all students
+	var teachersIDs []string
+	if err := r.DB.Table("students").Pluck("teachers_ids", &teachersIDs).Error; err != nil {
 		return nil, err
 	}
-	return Students, nil
+
+	// Fetching other student details
+	if err := r.DB.Select("id", "name", "student_id", "full_name", "course_name").Find(&students).Error; err != nil {
+		return nil, err
+	}
+
+	// Splitting the comma-separated string into a slice for each student
+	for i, student := range students {
+		student.TeachersIDs = strings.Split(teachersIDs[i], ",")
+	}
+
+	return students, nil
 }
 
 func (r *StudentRepositoryPostgres) Update(Student *entity.Student) error {

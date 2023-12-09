@@ -11,7 +11,9 @@ type GetStudentByIDOutputDto struct {
 	Name        string   `json:"name"`
 	FullName    string   `json:"full_name"`
 	CourseName  string   `json:"course_name"`
-	TeachersIDs []string `json:"teachers_ids"`
+	TeachersIDs []string `json:"teachers_ids" gorm:"type:varchar[]"`
+
+	// TeachersIDs []string `gorm:"type:jsonb" json:"teachers_ids"`
 }
 type GetStudentByIDUseCase struct {
 	StudentRepository entity.StudentRepository

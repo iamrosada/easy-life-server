@@ -19,10 +19,13 @@ type Serializable interface {
 }
 type Student struct {
 	ID          string   `json:"id"`
+	StudentID   string   `json:"student_id"`
 	Name        string   `json:"name"`
 	FullName    string   `json:"full_name"`
 	CourseName  string   `json:"course_language"`
-	TeachersIDs []string `gorm:"type:jsonb" json:"teachers_ids"`
+	TeachersIDs []string `json:"teachers_ids" gorm:"type:varchar[]"`
+
+	// TeachersIDs []string `gorm:"type:jsonb" json:"teachers_ids"`
 }
 
 func NewStudent(name, full_name, course_name string) *Student {
