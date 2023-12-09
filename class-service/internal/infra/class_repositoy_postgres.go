@@ -14,8 +14,8 @@ func NewClassRepositoryPostgres(db *gorm.DB) *ClassRepositoryPostgres {
 	return &ClassRepositoryPostgres{DB: db}
 }
 
-func (r *ClassRepositoryPostgres) Create(Class *entity.Class) error {
-	return r.DB.Create(Class).Error
+func (r *ClassRepositoryPostgres) Create(class *entity.Class) error {
+	return r.DB.Create(class).Error
 }
 
 func (r *ClassRepositoryPostgres) FindAll() ([]*entity.Class, error) {
@@ -26,18 +26,19 @@ func (r *ClassRepositoryPostgres) FindAll() ([]*entity.Class, error) {
 	return Classs, nil
 }
 
-func (r *ClassRepositoryPostgres) Update(Class *entity.Class) error {
-	return r.DB.Save(Class).Error
+func (r *ClassRepositoryPostgres) Update(class *entity.Class) error {
+	return r.DB.Save(&class).Error
+
 }
 
-func (r *ClassRepositoryPostgres) DeleteByID(id uint) error {
+func (r *ClassRepositoryPostgres) DeleteByID(id string) error {
 	return r.DB.Where("id = ?", id).Delete(entity.Class{}).Error
 }
 
-func (r *ClassRepositoryPostgres) GetByID(id uint) (*entity.Class, error) {
-	var Class entity.Class
-	if err := r.DB.Where("id = ?", id).First(&Class).Error; err != nil {
+func (r *ClassRepositoryPostgres) GetByID(id string) (*entity.Class, error) {
+	var class entity.Class
+	if err := r.DB.Where("id = ?", id).First(&class).Error; err != nil {
 		return nil, err
 	}
-	return &Class, nil
+	return &class, nil
 }
