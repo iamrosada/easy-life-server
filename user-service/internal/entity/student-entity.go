@@ -17,15 +17,15 @@ type Serializable interface {
 	BeforeSave() error
 	AfterFind() error
 }
-type Student struct {
-	ID          string   `json:"id"`
-	StudentID   string   `json:"student_id"`
-	Name        string   `json:"name"`
-	FullName    string   `json:"full_name"`
-	CourseName  string   `json:"course_language"`
-	TeachersIDs []string `json:"teachers_ids" gorm:"type:varchar[]"`
+type TeachersIDs []string
 
-	// TeachersIDs []string `gorm:"type:jsonb" json:"teachers_ids"`
+type Student struct {
+	ID          string      `json:"id"`
+	Name        string      `json:"name"`
+	FullName    string      `json:"full_name"`
+	CourseName  string      `json:"course_language"`
+	TeachersIDs TeachersIDs `gorm:"type:VARCHAR(255)" json:"teachers_ids"`
+	EventID     string      `json:"event_id"`
 }
 
 func NewStudent(name, full_name, course_name string) *Student {
@@ -37,10 +37,11 @@ func NewStudent(name, full_name, course_name string) *Student {
 	}
 }
 
-func (d *Student) Update(course_name, full_Name, name string) {
+func (d *Student) Update(course_name, full_Name, name, event_id string) {
 	d.CourseName = course_name
 	d.FullName = full_Name
 	d.Name = name
+	d.EventID = event_id
 }
 
 type InMemoryStudentRepository struct {

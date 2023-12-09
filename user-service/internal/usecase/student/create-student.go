@@ -7,18 +7,14 @@ type CreateStudentInputDto struct {
 	FullName    string   `json:"full_name"`
 	CourseName  string   `json:"course_name"`
 	TeachersIDs []string `json:"teachers_ids" gorm:"type:varchar[]"`
-
-	// TeachersIDs []string `gorm:"type:jsonb" json:"teachers_ids"`
 }
 
 type CreateStudentOutputDto struct {
 	ID          string   `json:"id"`
 	Name        string   `json:"name"`
-	FullName    string   `json:"full_name"` // Corrected field name
+	FullName    string   `json:"full_name"`
 	CourseName  string   `json:"course_name"`
 	TeachersIDs []string `json:"teachers_ids" gorm:"type:varchar[]"`
-
-	// TeachersIDs []string `gorm:"type:jsonb" json:"teachers_ids"`
 }
 type CreateStudentUseCase struct {
 	StudentRepository entity.StudentRepository

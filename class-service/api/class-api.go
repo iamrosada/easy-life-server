@@ -108,3 +108,16 @@ func (p *ClassHandlers) UpdateClassHandler(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, output)
 }
+
+// func (p *ClassHandlers) GetClassEventsIDHandler(c *gin.Context) {
+// 	class, err := p.ListClasssUseCase.Execute()
+// 	if err != nil {
+// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+// 		return
+// 	}
+// 	for classId,_ := range class{
+// 		if classId.students_ids
+
+// 	}
+// 	c.JSON(http.StatusOK, output)
+// }
