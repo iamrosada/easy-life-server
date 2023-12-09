@@ -7,11 +7,13 @@ type GetClassByIDInputputDto struct {
 }
 
 type GetClassByIDOutputDto struct {
-	ID         string `json:"id"`
-	Name       string `json:"name"`
-	FullName   string `json:"full_name"`
-	CourseName string `json:"course_name"`
+	ID            string   `json:"id"`
+	TitleOfLesson string   `json:"title_of_lesson"`
+	Description   string   `json:"description"`
+	TeacherID     string   `json:"teacher_id"`
+	StudentsIDs   []string `json:"students_ids"`
 }
+
 type GetClassByIDUseCase struct {
 	ClassRepository entity.ClassRepository
 }
@@ -21,15 +23,19 @@ func NewGetClassByIDUseCase(ClassRepository entity.ClassRepository) *GetClassByI
 }
 
 func (u *GetClassByIDUseCase) Execute(input GetClassByIDInputputDto) (*GetClassByIDOutputDto, error) {
-	Class, err := u.ClassRepository.GetByID(input.ID)
+	class, err := u.ClassRepository.GetByID(input.ID)
 	if err != nil {
 		return nil, err
 	}
-	return &GetClassByIDOutputDto{
-		ID:         Class.ID,
-		FullName:   Class.FullName,
-		Name:       Class.Name,
-		CourseName: Class.CourseName,
-	}, nil
 
+	// Return the output DTO with relevant information
+	outputDto := &GetClassByIDOutputDto{
+		ID:            class.ID,
+		TitleOfLesson: class.TitleOfLesson,
+		Description:   class.Description,
+		TeacherID:     class.TeacherID,
+		StudentsIDs:   class.StudentsIDs,
+	}
+
+	return outputDto, nil
 }

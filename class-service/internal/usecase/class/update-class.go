@@ -3,19 +3,21 @@ package usecase
 import "github.com/iamrosada/easy-life-server/class-service/internal/entity"
 
 type UpdateClassInputDto struct {
-	ID string `json:"id"`
-
-	Name       string `json:"name"`
-	FulName    string `json:"full_name"`
-	CourseName string `json:"course_name"`
+	ID            string   `json:"id"`
+	TitleOfLesson string   `json:"title_of_lesson"`
+	Description   string   `json:"description"`
+	TeacherID     string   `json:"teacher_id"`
+	StudentsIDs   []string `json:"students_ids"`
 }
 
 type UpdateClassOutputDto struct {
-	ID         string `json:"id"`
-	Name       string `json:"name"`
-	FulName    string `json:"full_name"`
-	CourseName string `json:"course_name"`
+	ID            string   `json:"id"`
+	TitleOfLesson string   `json:"title_of_lesson"`
+	Description   string   `json:"description"`
+	TeacherID     string   `json:"teacher_id"`
+	StudentsIDs   []string `json:"students_ids"`
 }
+
 type UpdateClassUseCase struct {
 	ClassRepository entity.ClassRepository
 }
@@ -25,22 +27,30 @@ func NewUpdateClassUseCase(ClassRepository entity.ClassRepository) *UpdateClassU
 }
 
 func (u *UpdateClassUseCase) Execute(input UpdateClassInputDto) (*UpdateClassOutputDto, error) {
-
-	ExistClass, err := u.ClassRepository.GetByID(input.ID)
+	// Get the existing class by ID
+	existingClass, err := u.ClassRepository.GetByID(input.ID)
 	if err != nil {
 		return nil, err
 	}
-	ExistClass.Update(input.CourseName, input.FulName, input.Name)
 
-	err = u.ClassRepository.Update(ExistClass)
+	// Update the existing class with values from the input DTO
+	existingClass.Update(input.TitleOfLesson, input.Description, input.TeacherID)
+	existingClass.StudentsIDs = input.StudentsIDs
+
+	// Save the updated class using the repository
+	err = u.ClassRepository.Update(existingClass)
 	if err != nil {
 		return nil, err
 	}
-	return &UpdateClassOutputDto{
-		ID:         ExistClass.ID,
-		FulName:    ExistClass.FullName,
-		Name:       ExistClass.Name,
-		CourseName: ExistClass.CourseName,
-	}, nil
 
+	// Return the output DTO with relevant information
+	outputDto := &UpdateClassOutputDto{
+		ID:            existingClass.ID,
+		TitleOfLesson: existingClass.TitleOfLesson,
+		Description:   existingClass.Description,
+		TeacherID:     existingClass.TeacherID,
+		StudentsIDs:   existingClass.StudentsIDs,
+	}
+
+	return outputDto, nil
 }

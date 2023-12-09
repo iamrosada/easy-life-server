@@ -14,26 +14,34 @@ type ClassRepository interface {
 	GetByID(id string) (*Class, error)
 }
 
+type Serializable interface {
+	BeforeSave() error
+	AfterFind() error
+}
+type StudentsIDs []string
 type Class struct {
-	ID         string
-	Name       string
-	FullName   string
-	CourseName string
+	ID            string      `json:"id"`
+	ClassID       string      `json:"class_id"`
+	TitleOfLesson string      `json:"title_of_lesson"`
+	Description   string      `json:"description"`
+	TeacherID     string      `json:"teacher_id"`
+	StudentsIDs   StudentsIDs `gorm:"type:VARCHAR(255)" json:"students_ids"`
 }
 
-func NewClass(name, full_name, course_name string) *Class {
+func NewClass(titleOfLesson, description, teacherID string, studentsIDs []string) *Class {
 	return &Class{
-		ID:         uuid.New().String(),
-		Name:       name,
-		FullName:   full_name,
-		CourseName: course_name,
+		ID:            uuid.New().String(),
+		TitleOfLesson: titleOfLesson,
+		Description:   description,
+		TeacherID:     teacherID,
+		StudentsIDs:   studentsIDs,
 	}
 }
 
-func (d *Class) Update(course_name, full_Name, name string) {
-	d.CourseName = course_name
-	d.FullName = full_Name
-	d.Name = name
+func (c *Class) Update(titleOfLesson, description, teacherID string) {
+	c.TitleOfLesson = titleOfLesson
+	c.Description = description
+	c.TeacherID = teacherID
 }
 
 type InMemoryClassRepository struct {

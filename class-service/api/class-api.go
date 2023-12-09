@@ -34,7 +34,7 @@ func NewClassHandlers(
 func (p *ClassHandlers) SetupRoutes(router *gin.Engine) {
 	api := router.Group("/api")
 	{
-		Classs := api.Group("/Classs")
+		Classs := api.Group("/class")
 		{
 			Classs.POST("/", p.CreateClassHandler)
 			Classs.GET("/", p.ListClasssHandler)

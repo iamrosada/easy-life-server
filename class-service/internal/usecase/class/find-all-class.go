@@ -1,9 +1,14 @@
 package usecase
 
-import "github.com/iamrosada/easy-life-server/class-service/internal/entity"
+import (
+	"encoding/json"
+	"fmt"
+
+	"github.com/iamrosada/easy-life-server/class-service/internal/entity"
+)
 
 type GetAllClassOutputDto struct {
-	Classs []*entity.Class `json:"classs"`
+	Class []*entity.Class `json:"classes"`
 }
 type GetAllClassUseCase struct {
 	ClassRepository entity.ClassRepository
@@ -14,10 +19,12 @@ func NewGetAllClassUseCase(ClassRepository entity.ClassRepository) *GetAllClassU
 }
 
 func (u *GetAllClassUseCase) Execute() (*GetAllClassOutputDto, error) {
-	Classs, err := u.ClassRepository.FindAll()
+	class, err := u.ClassRepository.FindAll()
 	if err != nil {
 		return nil, err
 	}
-	return &GetAllClassOutputDto{Classs: Classs}, nil
+	marshaled, _ := json.MarshalIndent(class, "", "\t")
+	fmt.Println(string(marshaled))
+	return &GetAllClassOutputDto{Class: class}, nil
 
 }

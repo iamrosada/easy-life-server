@@ -1,6 +1,10 @@
 package repository
 
 import (
+	"encoding/json"
+	"fmt"
+
+	"github.com/google/uuid"
 	"github.com/iamrosada/easy-life-server/class-service/internal/entity"
 	_ "gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -15,15 +19,33 @@ func NewClassRepositoryPostgres(db *gorm.DB) *ClassRepositoryPostgres {
 }
 
 func (r *ClassRepositoryPostgres) Create(class *entity.Class) error {
-	return r.DB.Create(class).Error
+	// Iterate through each student ID and create a new class for each
+	createdNewClass := entity.Class{
+		ID:            uuid.New().String(),
+		ClassID:       class.ID,
+		TitleOfLesson: class.TitleOfLesson,
+		Description:   class.Description,
+		TeacherID:     class.TeacherID,
+		StudentsIDs:   class.StudentsIDs,
+	}
+	// []string{"vida", "Amor"}
+	if err := r.DB.Create(&createdNewClass).Error; err != nil {
+		// log.Printf("Error creating class for user %s: %v", studentID, err)
+		// return fmt.Errorf("failed to create class for user %s: %v", studentID, err)
+
+	}
+	return nil
 }
 
 func (r *ClassRepositoryPostgres) FindAll() ([]*entity.Class, error) {
-	var Classs []*entity.Class
-	if err := r.DB.Find(&Classs).Error; err != nil {
+	var class []*entity.Class
+	marshaled, _ := json.MarshalIndent(class, "", "\t")
+	fmt.Println(string(marshaled))
+	if err := r.DB.Find(&class).Error; err != nil {
 		return nil, err
 	}
-	return Classs, nil
+
+	return class, nil
 }
 
 func (r *ClassRepositoryPostgres) Update(class *entity.Class) error {
