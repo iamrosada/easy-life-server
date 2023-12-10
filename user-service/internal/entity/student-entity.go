@@ -11,6 +11,7 @@ type StudentRepository interface {
 	FindAll() ([]*Student, error)
 	Update(student *Student) error
 	DeleteByID(id string) error
+	ApplyEvent(eventID string, StudentdsIDs []string) error
 	GetByID(id string) (*Student, error)
 }
 type Serializable interface {

@@ -1,6 +1,9 @@
 package repository
 
 import (
+	"fmt"
+	"log"
+
 	"github.com/iamrosada/easy-life-server/user-server/internal/entity"
 	_ "gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -56,4 +59,29 @@ func (r *StudentRepositoryPostgres) GetByID(id string) (*entity.Student, error) 
 		return nil, err
 	}
 	return &Student, nil
+}
+
+func (r *StudentRepositoryPostgres) ApplyEvent(eventID string, studentIDs []string) error {
+	// Iterate through each student ID and apply the event
+	for _, studentID := range studentIDs {
+		// Fetch student information using GetByID
+		getStudent, err := r.GetByID(studentID)
+		if err != nil {
+			log.Printf("Error fetching student information for ID %s: %v", studentID, err)
+			return fmt.Errorf("failed to fetch student information for ID %s: %v", studentID, err)
+		}
+
+		// Update the EventID field for the event being applied
+		getStudent.EventID = eventID
+
+		log.Printf("Applying event for student %s with event ID %s", studentID, eventID)
+
+		// Save the updated student record
+		if err := r.DB.Save(getStudent).Error; err != nil {
+			log.Printf("Error applying event for student %s: %v", studentID, err)
+			return fmt.Errorf("failed to apply event for student %s: %v", studentID, err)
+		}
+	}
+
+	return nil
 }

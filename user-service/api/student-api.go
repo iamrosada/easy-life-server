@@ -8,11 +8,12 @@ import (
 )
 
 type StudentHandlers struct {
-	CreateStudentUseCase  *student.CreateStudentUseCase
-	ListStudentsUseCase   *student.GetAllStudentUseCase
-	DeleteStudentUseCase  *student.DeleteStudentUseCase
-	GetStudentByIDUseCase *student.GetStudentByIDUseCase
-	UpdateStudentUseCase  *student.UpdateStudentUseCase
+	CreateStudentUseCase     *student.CreateStudentUseCase
+	ListStudentsUseCase      *student.GetAllStudentUseCase
+	DeleteStudentUseCase     *student.DeleteStudentUseCase
+	GetStudentByIDUseCase    *student.GetStudentByIDUseCase
+	UpdateStudentUseCase     *student.UpdateStudentUseCase
+	ApplyEventStudentUseCase *student.ApplyEventStudentUseCase
 }
 
 func NewStudentHandlers(
@@ -21,13 +22,16 @@ func NewStudentHandlers(
 	deleteStudentUseCase *student.DeleteStudentUseCase,
 	getStudentByIDUseCase *student.GetStudentByIDUseCase,
 	updateStudentUseCase *student.UpdateStudentUseCase,
+	applyEventStudentUseCase *student.ApplyEventStudentUseCase,
+
 ) *StudentHandlers {
 	return &StudentHandlers{
-		CreateStudentUseCase:  createStudentUseCase,
-		ListStudentsUseCase:   listStudentsUseCase,
-		DeleteStudentUseCase:  deleteStudentUseCase,
-		GetStudentByIDUseCase: getStudentByIDUseCase,
-		UpdateStudentUseCase:  updateStudentUseCase,
+		CreateStudentUseCase:     createStudentUseCase,
+		ListStudentsUseCase:      listStudentsUseCase,
+		DeleteStudentUseCase:     deleteStudentUseCase,
+		GetStudentByIDUseCase:    getStudentByIDUseCase,
+		UpdateStudentUseCase:     updateStudentUseCase,
+		ApplyEventStudentUseCase: applyEventStudentUseCase,
 	}
 }
 
@@ -41,6 +45,9 @@ func (p *StudentHandlers) SetupRoutes(router *gin.Engine) {
 			Students.DELETE("/", p.DeleteStudentHandler)
 			Students.GET("/:id", p.GetStudentByIDHandler)
 			Students.PUT("/", p.UpdateStudentHandler)
+
+			Students.POST("/event/:id", p.ApplyEventToStudentHandler)
+
 		}
 
 	}
@@ -107,4 +114,25 @@ func (p *StudentHandlers) UpdateStudentHandler(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, output)
+}
+
+func (p *StudentHandlers) ApplyEventToStudentHandler(c *gin.Context) {
+	eventID := c.Param("id")
+
+	var request struct {
+		StudentsIDs []string `json:"students_ids"`
+	}
+
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err := p.ApplyEventStudentUseCase.ApplyEvent(eventID, request.StudentsIDs)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Event applied successfully"})
 }
