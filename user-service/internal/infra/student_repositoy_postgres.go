@@ -85,3 +85,26 @@ func (r *StudentRepositoryPostgres) ApplyEvent(eventID string, studentIDs []stri
 
 	return nil
 }
+
+func (r *StudentRepositoryPostgres) ListStudentsByTeacherID(teacherID string) ([]*entity.Student, error) {
+	var students []*entity.Student
+
+	// Fetching all students
+	if err := r.DB.Find(&students).Error; err != nil {
+		return nil, err
+	}
+
+	// Filter students by teacher ID
+	filteredStudents := make([]*entity.Student, 0)
+	for _, student := range students {
+		for _, teacherIDInList := range student.TeachersIDs {
+			if teacherIDInList == teacherID {
+				// Add the student to the filtered list
+				filteredStudents = append(filteredStudents, student)
+				break // No need to check further once a match is found
+			}
+		}
+	}
+
+	return filteredStudents, nil
+}

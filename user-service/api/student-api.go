@@ -8,12 +8,13 @@ import (
 )
 
 type StudentHandlers struct {
-	CreateStudentUseCase     *student.CreateStudentUseCase
-	ListStudentsUseCase      *student.GetAllStudentUseCase
-	DeleteStudentUseCase     *student.DeleteStudentUseCase
-	GetStudentByIDUseCase    *student.GetStudentByIDUseCase
-	UpdateStudentUseCase     *student.UpdateStudentUseCase
-	ApplyEventStudentUseCase *student.ApplyEventStudentUseCase
+	CreateStudentUseCase          *student.CreateStudentUseCase
+	ListStudentsUseCase           *student.GetAllStudentUseCase
+	DeleteStudentUseCase          *student.DeleteStudentUseCase
+	GetStudentByIDUseCase         *student.GetStudentByIDUseCase
+	UpdateStudentUseCase          *student.UpdateStudentUseCase
+	ApplyEventStudentUseCase      *student.ApplyEventStudentUseCase
+	ListStudentsByTeacherIDUseCae *student.ListStudentsByTeacherIDUseCase
 }
 
 func NewStudentHandlers(
@@ -23,15 +24,17 @@ func NewStudentHandlers(
 	getStudentByIDUseCase *student.GetStudentByIDUseCase,
 	updateStudentUseCase *student.UpdateStudentUseCase,
 	applyEventStudentUseCase *student.ApplyEventStudentUseCase,
+	listStudentsByTeacherIDUseCae *student.ListStudentsByTeacherIDUseCase,
 
 ) *StudentHandlers {
 	return &StudentHandlers{
-		CreateStudentUseCase:     createStudentUseCase,
-		ListStudentsUseCase:      listStudentsUseCase,
-		DeleteStudentUseCase:     deleteStudentUseCase,
-		GetStudentByIDUseCase:    getStudentByIDUseCase,
-		UpdateStudentUseCase:     updateStudentUseCase,
-		ApplyEventStudentUseCase: applyEventStudentUseCase,
+		CreateStudentUseCase:          createStudentUseCase,
+		ListStudentsUseCase:           listStudentsUseCase,
+		DeleteStudentUseCase:          deleteStudentUseCase,
+		GetStudentByIDUseCase:         getStudentByIDUseCase,
+		UpdateStudentUseCase:          updateStudentUseCase,
+		ApplyEventStudentUseCase:      applyEventStudentUseCase,
+		ListStudentsByTeacherIDUseCae: listStudentsByTeacherIDUseCae,
 	}
 }
 
@@ -47,6 +50,8 @@ func (p *StudentHandlers) SetupRoutes(router *gin.Engine) {
 			Students.PUT("/", p.UpdateStudentHandler)
 
 			Students.POST("/event/:id", p.ApplyEventToStudentHandler)
+
+			Students.GET("/teacher-id/:id/students", p.GetStudentsUsingTeacherIDHandler)
 
 		}
 
@@ -135,4 +140,16 @@ func (p *StudentHandlers) ApplyEventToStudentHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Event applied successfully"})
+}
+
+func (p *StudentHandlers) GetStudentsUsingTeacherIDHandler(c *gin.Context) {
+
+	id := c.Param("id")
+
+	output, err := p.ListStudentsByTeacherIDUseCae.ListStudentsByTeacherID(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, output)
 }

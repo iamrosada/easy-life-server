@@ -9,6 +9,8 @@ import (
 type StudentRepository interface {
 	Create(student *Student) error
 	FindAll() ([]*Student, error)
+	ListStudentsByTeacherID(teacherId string) ([]*Student, error)
+
 	Update(student *Student) error
 	DeleteByID(id string) error
 	ApplyEvent(eventID string, StudentdsIDs []string) error

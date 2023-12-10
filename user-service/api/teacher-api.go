@@ -41,6 +41,8 @@ func (p *TeacherHandlers) SetupRoutes(router *gin.Engine) {
 			Teachers.DELETE("/", p.DeleteTeacherHandler)
 			Teachers.GET("/:id", p.GetTeacherByIDHandler)
 			Teachers.PUT("/", p.UpdateTeacherHandler)
+			// Teachers.GET("/:id/students", p.GetStudentsUsingTeacherIDHandler)
+
 		}
 
 	}

@@ -68,9 +68,10 @@ func main() {
 	getStudentByIDUsecase := student.NewGetStudentByIDUseCase(StudentRepository)
 	updateStudentUsecase := student.NewUpdateStudentUseCase(StudentRepository)
 	applyEventStudentUseCase := student.NewCreateEventStudentUseCase(StudentRepository)
+	listStudentsByTeacherIDUseCase := student.NewListStudentsByTeacherIDUseCase(StudentRepository)
 
 	// Create handlers
-	StudentHandlers := api.NewStudentHandlers(createStudentUsecase, listStudentsUsecase, deleteStudentUsecase, getStudentByIDUsecase, updateStudentUsecase, applyEventStudentUseCase)
+	StudentHandlers := api.NewStudentHandlers(createStudentUsecase, listStudentsUsecase, deleteStudentUsecase, getStudentByIDUsecase, updateStudentUsecase, applyEventStudentUseCase, listStudentsByTeacherIDUseCase)
 
 	// Set up Gin router
 	router := gin.Default()
