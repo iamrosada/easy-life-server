@@ -6,9 +6,8 @@ import (
 	"net/http"
 	"os"
 
-	// "github.com/iamrosada/easy-life-server/Student-server/internal/entity"
-	// student "github.com/iamrosada/easy-life-server/class-service/internal/usecase/student"
-	// teacher "github.com/iamrosada/easy-life-server/class-service/internal/usecase/teacher"
+	// Import the CORS middleware
+	"github.com/gin-gonic/gin"
 
 	"github.com/iamrosada/easy-life-server/user-server/api"
 	"github.com/iamrosada/easy-life-server/user-server/internal/entity"
@@ -16,14 +15,29 @@ import (
 	"github.com/iamrosada/easy-life-server/user-server/internal/usecase/student"
 	"github.com/iamrosada/easy-life-server/user-server/internal/usecase/teacher"
 	_ "github.com/mattn/go-sqlite3"
-
-	"github.com/gin-gonic/gin"
-
-	_ "github.com/lib/pq"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
+func disableCors() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "*")
+
+		//c.Writer.Header().Set("Access-Control-Allow-Headers", "Accept, Authorization, Content-Type, Content-Length, Accept-Encoding")
+
+		// I added this for another handler of mine,
+		// but I do not think this is necessary for GraphQL's handler
+		if c.Request.Method == "OPTIONS" {
+			c.Writer.Header().Set("Access-Control-Max-Age", "86400")
+			c.Writer.WriteHeader(http.StatusOK)
+			return
+		}
+
+		c.Next()
+	}
+}
 func main() {
 	dbPath := "./db/main.db"
 	sqlDB, err := sql.Open("sqlite3", dbPath)
@@ -52,10 +66,18 @@ func main() {
 		panic(err)
 	}
 
+	// Set up Gin router with CORS middleware
+	router := gin.Default()
+
+	// Configure CORS middleware
+
+	router.Use(disableCors())
+
 	err = gormDB.AutoMigrate(&entity.Student{}, &entity.Teacher{})
 	if err != nil {
 		panic(err)
 	}
+
 	// Callback functions for serialization and deserialization
 	gormDB.Callback().Create().Before("gorm:before_create").Register("serializeTeachersIDs", serializeCodes)
 	gormDB.Callback().Query().After("gorm:after_query").Register("deserializeTeachersIDs", deserializeCodes)
@@ -69,12 +91,10 @@ func main() {
 	updateStudentUsecase := student.NewUpdateStudentUseCase(StudentRepository)
 	applyEventStudentUseCase := student.NewCreateEventStudentUseCase(StudentRepository)
 	listStudentsByTeacherIDUseCase := student.NewListStudentsByTeacherIDUseCase(StudentRepository)
+	getStudentByEmailUseCase := student.NewGetStudentByEmailUseCase(StudentRepository)
 
 	// Create handlers
-	StudentHandlers := api.NewStudentHandlers(createStudentUsecase, listStudentsUsecase, deleteStudentUsecase, getStudentByIDUsecase, updateStudentUsecase, applyEventStudentUseCase, listStudentsByTeacherIDUseCase)
-
-	// Set up Gin router
-	router := gin.Default()
+	StudentHandlers := api.NewStudentHandlers(createStudentUsecase, listStudentsUsecase, deleteStudentUsecase, getStudentByIDUsecase, updateStudentUsecase, applyEventStudentUseCase, listStudentsByTeacherIDUseCase, getStudentByEmailUseCase)
 
 	TeacherRepository := repository.NewTeacherRepositoryPostgres(gormDB)
 	createTeacherUsecase := teacher.NewCreateTeacherUseCase(TeacherRepository)
@@ -90,6 +110,7 @@ func main() {
 	TeacherHandlers.SetupRoutes(router)
 
 	// Start the server
+
 	err = http.ListenAndServe(":8000", router)
 	if err != nil {
 		fmt.Println(err)

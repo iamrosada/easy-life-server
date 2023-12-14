@@ -20,6 +20,25 @@ import (
 	"gorm.io/gorm"
 )
 
+func disableCors() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "*")
+
+		//c.Writer.Header().Set("Access-Control-Allow-Headers", "Accept, Authorization, Content-Type, Content-Length, Accept-Encoding")
+
+		// I added this for another handler of mine,
+		// but I do not think this is necessary for GraphQL's handler
+		if c.Request.Method == "OPTIONS" {
+			c.Writer.Header().Set("Access-Control-Max-Age", "86400")
+			c.Writer.WriteHeader(http.StatusOK)
+			return
+		}
+
+		c.Next()
+	}
+}
 func main() {
 	dbPath := "./db/main.db"
 	sqlDB, err := sql.Open("sqlite3", dbPath)
@@ -47,6 +66,11 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	router := gin.Default()
+
+	// Configure CORS middleware
+
+	router.Use(disableCors())
 
 	err = gormDB.AutoMigrate(&entity.Class{})
 	if err != nil {
@@ -68,7 +92,6 @@ func main() {
 	ClassHandlers := api.NewClassHandlers(createClassUsecase, listClasssUsecase, deleteClassUsecase, getClassByIDUsecase, updateClassUsecase)
 
 	// Set up Gin router
-	router := gin.Default()
 
 	// Set up Class routes
 	ClassHandlers.SetupRoutes(router)
