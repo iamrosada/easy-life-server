@@ -15,6 +15,7 @@ type StudentHandlers struct {
 	UpdateStudentUseCase          *student.UpdateStudentUseCase
 	ApplyEventStudentUseCase      *student.ApplyEventStudentUseCase
 	ListStudentsByTeacherIDUseCae *student.ListStudentsByTeacherIDUseCase
+	GetStudentByEmailUseCase      *student.GetStudentByEmailUseCase
 }
 
 func NewStudentHandlers(
@@ -25,6 +26,7 @@ func NewStudentHandlers(
 	updateStudentUseCase *student.UpdateStudentUseCase,
 	applyEventStudentUseCase *student.ApplyEventStudentUseCase,
 	listStudentsByTeacherIDUseCae *student.ListStudentsByTeacherIDUseCase,
+	getStudentByEmailUseCase *student.GetStudentByEmailUseCase,
 
 ) *StudentHandlers {
 	return &StudentHandlers{
@@ -35,6 +37,7 @@ func NewStudentHandlers(
 		UpdateStudentUseCase:          updateStudentUseCase,
 		ApplyEventStudentUseCase:      applyEventStudentUseCase,
 		ListStudentsByTeacherIDUseCae: listStudentsByTeacherIDUseCae,
+		GetStudentByEmailUseCase:      getStudentByEmailUseCase,
 	}
 }
 
@@ -52,6 +55,8 @@ func (p *StudentHandlers) SetupRoutes(router *gin.Engine) {
 			Students.POST("/event/:id", p.ApplyEventToStudentHandler)
 
 			Students.GET("/teacher-id/:id/students", p.GetStudentsUsingTeacherIDHandler)
+
+			Students.GET("/email/:email", p.GetStudentByEmailHandler)
 
 		}
 
@@ -106,7 +111,17 @@ func (p *StudentHandlers) GetStudentByIDHandler(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, output)
 }
+func (p *StudentHandlers) GetStudentByEmailHandler(c *gin.Context) {
+	email := c.Param("email")
 
+	input := student.GetStudentByEmailInputputDto{Email: email}
+	output, err := p.GetStudentByEmailUseCase.Execute(input)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, output)
+}
 func (p *StudentHandlers) UpdateStudentHandler(c *gin.Context) {
 	var input student.UpdateStudentInputDto
 	if err := c.ShouldBindJSON(&input); err != nil {
