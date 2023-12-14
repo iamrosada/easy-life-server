@@ -7,11 +7,13 @@ type GetStudentByEmailInputputDto struct {
 }
 
 type GetStudentByEmailOutputDto struct {
-	ID          string   `json:"id"`
-	Name        string   `json:"name"`
-	FullName    string   `json:"full_name"`
-	CourseName  string   `json:"course_name"`
-	Email       string   `json:"email"`
+	ID         string `json:"id"`
+	Name       string `json:"name"`
+	FullName   string `json:"full_name"`
+	CourseName string `json:"course_name"`
+	Email      string `json:"email"`
+	EventID    string `json:"event_id"`
+
 	TeachersIDs []string `json:"teachers_ids" gorm:"type:varchar[]"`
 
 	// TeachersIDs []string `gorm:"type:jsonb" json:"teachers_ids"`
@@ -33,6 +35,7 @@ func (u *GetStudentByEmailUseCase) Execute(input GetStudentByEmailInputputDto) (
 		ID:          Student.ID,
 		FullName:    Student.FullName,
 		Name:        Student.Name,
+		EventID:     Student.EventID,
 		Email:       Student.Email,
 		CourseName:  Student.CourseName,
 		TeachersIDs: Student.TeachersIDs,
