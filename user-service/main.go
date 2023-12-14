@@ -92,9 +92,10 @@ func main() {
 	applyEventStudentUseCase := student.NewCreateEventStudentUseCase(StudentRepository)
 	listStudentsByTeacherIDUseCase := student.NewListStudentsByTeacherIDUseCase(StudentRepository)
 	getStudentByEmailUseCase := student.NewGetStudentByEmailUseCase(StudentRepository)
+	getStudentByEventIDUseCase := student.NewGetStudentByEventIDUseCase(StudentRepository)
 
 	// Create handlers
-	StudentHandlers := api.NewStudentHandlers(createStudentUsecase, listStudentsUsecase, deleteStudentUsecase, getStudentByIDUsecase, updateStudentUsecase, applyEventStudentUseCase, listStudentsByTeacherIDUseCase, getStudentByEmailUseCase)
+	StudentHandlers := api.NewStudentHandlers(createStudentUsecase, listStudentsUsecase, deleteStudentUsecase, getStudentByIDUsecase, updateStudentUsecase, applyEventStudentUseCase, listStudentsByTeacherIDUseCase, getStudentByEmailUseCase, getStudentByEventIDUseCase)
 
 	TeacherRepository := repository.NewTeacherRepositoryPostgres(gormDB)
 	createTeacherUsecase := teacher.NewCreateTeacherUseCase(TeacherRepository)

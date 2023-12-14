@@ -16,6 +16,7 @@ type StudentRepository interface {
 	ApplyEvent(eventID string, StudentdsIDs []string) error
 	GetByID(id string) (*Student, error)
 	GetByEmail(id string) (*Student, error)
+	GetByEventID(id string) ([]*Student, error)
 }
 type Serializable interface {
 	BeforeSave() error

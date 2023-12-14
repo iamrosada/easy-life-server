@@ -46,6 +46,17 @@ func (r *StudentRepositoryPostgres) FindAll() ([]*entity.Student, error) {
 	return students, nil
 }
 
+func (r *StudentRepositoryPostgres) GetByEventID(id string) ([]*entity.Student, error) {
+	var students []*entity.Student
+
+	// Fetching teachers_ids for all students
+	if err := r.DB.Where("event_id = ?", id).Find(&students).Error; err != nil {
+		return nil, err
+	}
+
+	return students, nil
+}
+
 func (r *StudentRepositoryPostgres) Update(Student *entity.Student) error {
 	return r.DB.Save(Student).Error
 }

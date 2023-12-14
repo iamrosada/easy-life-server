@@ -16,6 +16,7 @@ type StudentHandlers struct {
 	ApplyEventStudentUseCase      *student.ApplyEventStudentUseCase
 	ListStudentsByTeacherIDUseCae *student.ListStudentsByTeacherIDUseCase
 	GetStudentByEmailUseCase      *student.GetStudentByEmailUseCase
+	GetStudentByEventIDUseCase    *student.GetStudentByEventIDUseCase
 }
 
 func NewStudentHandlers(
@@ -27,6 +28,7 @@ func NewStudentHandlers(
 	applyEventStudentUseCase *student.ApplyEventStudentUseCase,
 	listStudentsByTeacherIDUseCae *student.ListStudentsByTeacherIDUseCase,
 	getStudentByEmailUseCase *student.GetStudentByEmailUseCase,
+	getStudentByEventIDUseCase *student.GetStudentByEventIDUseCase,
 
 ) *StudentHandlers {
 	return &StudentHandlers{
@@ -38,6 +40,7 @@ func NewStudentHandlers(
 		ApplyEventStudentUseCase:      applyEventStudentUseCase,
 		ListStudentsByTeacherIDUseCae: listStudentsByTeacherIDUseCae,
 		GetStudentByEmailUseCase:      getStudentByEmailUseCase,
+		GetStudentByEventIDUseCase:    getStudentByEventIDUseCase,
 	}
 }
 
@@ -57,6 +60,8 @@ func (p *StudentHandlers) SetupRoutes(router *gin.Engine) {
 			Students.GET("/teacher-id/:id/students", p.GetStudentsUsingTeacherIDHandler)
 
 			Students.GET("/email/:email", p.GetStudentByEmailHandler)
+
+			Students.GET("/event/:id/students", p.GetStudentByEventIDHandler)
 
 		}
 
@@ -157,6 +162,20 @@ func (p *StudentHandlers) ApplyEventToStudentHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Event applied successfully"})
 }
 
+func (p *StudentHandlers) GetStudentByEventIDHandler(c *gin.Context) {
+	id := c.Param("id")
+
+	input := student.GetStudentByEventIDInputputDto{EventID: id}
+
+	output, err := p.GetStudentByEventIDUseCase.Execute(input)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, output)
+
+	c.JSON(http.StatusOK, gin.H{"message": "Event found with all students successfully"})
+}
 func (p *StudentHandlers) GetStudentsUsingTeacherIDHandler(c *gin.Context) {
 
 	id := c.Param("id")
