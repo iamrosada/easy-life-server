@@ -2,37 +2,38 @@ package student
 
 import "github.com/iamrosada/easy-life-server/user-server/internal/entity"
 
-type GetStudentByIDInputputDto struct {
-	ID string `json:"id"`
+type GetStudentByEmailInputputDto struct {
+	Email string `json:"email"`
 }
 
-type GetStudentByIDOutputDto struct {
+type GetStudentByEmailOutputDto struct {
 	ID          string   `json:"id"`
 	Name        string   `json:"name"`
 	FullName    string   `json:"full_name"`
-	Email       string   `json:"email"`
 	CourseName  string   `json:"course_name"`
+	Email       string   `json:"email"`
 	TeachersIDs []string `json:"teachers_ids" gorm:"type:varchar[]"`
 
 	// TeachersIDs []string `gorm:"type:jsonb" json:"teachers_ids"`
 }
-type GetStudentByIDUseCase struct {
+type GetStudentByEmailUseCase struct {
 	StudentRepository entity.StudentRepository
 }
 
-func NewGetStudentByIDUseCase(StudentRepository entity.StudentRepository) *GetStudentByIDUseCase {
-	return &GetStudentByIDUseCase{StudentRepository: StudentRepository}
+func NewGetStudentByEmailUseCase(StudentRepository entity.StudentRepository) *GetStudentByEmailUseCase {
+	return &GetStudentByEmailUseCase{StudentRepository: StudentRepository}
 }
 
-func (u *GetStudentByIDUseCase) Execute(input GetStudentByIDInputputDto) (*GetStudentByIDOutputDto, error) {
-	Student, err := u.StudentRepository.GetByID(input.ID)
+func (u *GetStudentByEmailUseCase) Execute(input GetStudentByEmailInputputDto) (*GetStudentByEmailOutputDto, error) {
+	Student, err := u.StudentRepository.GetByEmail(input.Email)
 	if err != nil {
 		return nil, err
 	}
-	return &GetStudentByIDOutputDto{
+	return &GetStudentByEmailOutputDto{
 		ID:          Student.ID,
 		FullName:    Student.FullName,
 		Name:        Student.Name,
+		Email:       Student.Email,
 		CourseName:  Student.CourseName,
 		TeachersIDs: Student.TeachersIDs,
 	}, nil

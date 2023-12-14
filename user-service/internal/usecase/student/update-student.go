@@ -9,6 +9,7 @@ type UpdateStudentInputDto struct {
 	FulName    string `json:"full_name"`
 	CourseName string `json:"course_name"`
 	EventID    string `json:"event_id"`
+	Email      string `json:"email"`
 }
 
 type UpdateStudentOutputDto struct {
@@ -17,6 +18,7 @@ type UpdateStudentOutputDto struct {
 	FulName    string `json:"full_name"`
 	CourseName string `json:"course_name"`
 	EventID    string `json:"event_id"`
+	Email      string `json:"email"`
 }
 type UpdateStudentUseCase struct {
 	StudentRepository entity.StudentRepository
@@ -32,7 +34,7 @@ func (u *UpdateStudentUseCase) Execute(input UpdateStudentInputDto) (*UpdateStud
 	if err != nil {
 		return nil, err
 	}
-	ExistStudent.Update(input.CourseName, input.FulName, input.Name, input.EventID)
+	ExistStudent.Update(input.CourseName, input.FulName, input.Name, input.EventID, input.Email)
 
 	err = u.StudentRepository.Update(ExistStudent)
 	if err != nil {
@@ -43,6 +45,7 @@ func (u *UpdateStudentUseCase) Execute(input UpdateStudentInputDto) (*UpdateStud
 		FulName:    ExistStudent.FullName,
 		Name:       ExistStudent.Name,
 		CourseName: ExistStudent.CourseName,
+		Email:      ExistStudent.Email,
 		EventID:    ExistStudent.EventID,
 	}, nil
 

@@ -24,6 +24,7 @@ func (r *StudentRepositoryPostgres) Create(student *entity.Student) error {
 		TeachersIDs: student.TeachersIDs,
 		FullName:    student.FullName,
 		Name:        student.Name,
+		Email:       student.Email,
 		CourseName:  student.CourseName,
 	}
 
@@ -61,6 +62,13 @@ func (r *StudentRepositoryPostgres) GetByID(id string) (*entity.Student, error) 
 	return &Student, nil
 }
 
+func (r *StudentRepositoryPostgres) GetByEmail(email string) (*entity.Student, error) {
+	var Student entity.Student
+	if err := r.DB.Where("email = ?", email).First(&Student).Error; err != nil {
+		return nil, err
+	}
+	return &Student, nil
+}
 func (r *StudentRepositoryPostgres) ApplyEvent(eventID string, studentIDs []string) error {
 	// Iterate through each student ID and apply the event
 	for _, studentID := range studentIDs {
