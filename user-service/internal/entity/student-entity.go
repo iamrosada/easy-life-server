@@ -15,6 +15,7 @@ type StudentRepository interface {
 	DeleteByID(id string) error
 	ApplyEvent(eventID string, StudentdsIDs []string) error
 	GetByID(id string) (*Student, error)
+	GetByEmail(id string) (*Student, error)
 }
 type Serializable interface {
 	BeforeSave() error
@@ -29,21 +30,25 @@ type Student struct {
 	CourseName  string      `json:"course_language"`
 	TeachersIDs TeachersIDs `gorm:"type:VARCHAR(255)" json:"teachers_ids"`
 	EventID     string      `json:"event_id"`
+	Email       string      `json:"email"`
 }
 
-func NewStudent(name, full_name, course_name string) *Student {
+func NewStudent(name, full_name, course_name, email string) *Student {
 	return &Student{
 		ID:         uuid.New().String(),
 		Name:       name,
 		FullName:   full_name,
 		CourseName: course_name,
+		Email:      email,
 	}
 }
 
-func (d *Student) Update(course_name, full_Name, name, event_id string) {
+func (d *Student) Update(course_name, full_Name, name, event_id, email string) {
 	d.CourseName = course_name
 	d.FullName = full_Name
 	d.Name = name
+	d.Email = email
+
 	d.EventID = event_id
 }
 
