@@ -11,6 +11,7 @@ type GetClassByIDOutputDto struct {
 	TitleOfLesson string   `json:"title_of_lesson"`
 	Description   string   `json:"description"`
 	TeacherID     string   `json:"teacher_id"`
+	GoogleMeetUrl string   `json:"google_meet_url"`
 	StudentsIDs   []string `json:"students_ids"`
 }
 
@@ -35,6 +36,7 @@ func (u *GetClassByIDUseCase) Execute(input GetClassByIDInputputDto) (*GetClassB
 		Description:   class.Description,
 		TeacherID:     class.TeacherID,
 		StudentsIDs:   class.StudentsIDs,
+		GoogleMeetUrl: class.GoogleMeetUrl,
 	}
 
 	return outputDto, nil

@@ -24,23 +24,27 @@ type Class struct {
 	TitleOfLesson string      `json:"title_of_lesson"`
 	Description   string      `json:"description"`
 	TeacherID     string      `json:"teacher_id"`
+	GoogleMeetUrl string      `json:"google_meet_url"`
 	StudentsIDs   StudentsIDs `gorm:"type:VARCHAR(255)" json:"students_ids"`
 }
 
-func NewClass(titleOfLesson, description, teacherID string, studentsIDs []string) *Class {
+func NewClass(titleOfLesson, description, teacherID string, studentsIDs []string, googleMeetUrl string) *Class {
 	return &Class{
 		ID:            uuid.New().String(),
 		TitleOfLesson: titleOfLesson,
 		Description:   description,
 		TeacherID:     teacherID,
 		StudentsIDs:   studentsIDs,
+		GoogleMeetUrl: googleMeetUrl,
 	}
 }
 
-func (c *Class) Update(titleOfLesson, description, teacherID string) {
+func (c *Class) Update(titleOfLesson, description, teacherID, googleMeetUrl string) {
 	c.TitleOfLesson = titleOfLesson
 	c.Description = description
 	c.TeacherID = teacherID
+	c.GoogleMeetUrl = googleMeetUrl
+
 }
 
 type InMemoryClassRepository struct {

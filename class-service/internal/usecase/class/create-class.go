@@ -9,6 +9,7 @@ type CreateClassInputDto struct {
 	Description   string   `json:"description"`
 	TeacherID     string   `json:"teacher_id"`
 	StudentsIDs   []string `json:"students_ids"`
+	GoogleMeetUrl string   `json:"google_meet_url"`
 }
 
 type CreateClassOutputDto struct {
@@ -17,6 +18,7 @@ type CreateClassOutputDto struct {
 	Description   string   `json:"description"`
 	TeacherID     string   `json:"teacher_id"`
 	StudentsIDs   []string `json:"students_ids"`
+	GoogleMeetUrl string   `json:"google_meet_url"`
 }
 
 type CreateClassUseCase struct {
@@ -30,7 +32,7 @@ func NewCreateClassUseCase(ClassRepository entity.ClassRepository) *CreateClassU
 func (u *CreateClassUseCase) Execute(input CreateClassInputDto) (*CreateClassOutputDto, error) {
 
 	// Create a new class entity
-	newClass := entity.NewClass(input.TitleOfLesson, input.Description, input.TeacherID, input.StudentsIDs)
+	newClass := entity.NewClass(input.TitleOfLesson, input.Description, input.TeacherID, input.StudentsIDs, input.GoogleMeetUrl)
 	newClass.StudentsIDs = input.StudentsIDs
 
 	// marshaled, _ := json.MarshalIndent(newClass, "", "\t")
@@ -48,6 +50,7 @@ func (u *CreateClassUseCase) Execute(input CreateClassInputDto) (*CreateClassOut
 		Description:   newClass.Description,
 		TeacherID:     newClass.TeacherID,
 		StudentsIDs:   newClass.StudentsIDs,
+		GoogleMeetUrl: newClass.GoogleMeetUrl,
 	}
 
 	return outputDto, nil

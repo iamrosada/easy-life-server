@@ -8,6 +8,7 @@ type UpdateClassInputDto struct {
 	Description   string   `json:"description"`
 	TeacherID     string   `json:"teacher_id"`
 	StudentsIDs   []string `json:"students_ids"`
+	GoogleMeetUrl string   `json:"google_meet_url"`
 }
 
 type UpdateClassOutputDto struct {
@@ -16,6 +17,7 @@ type UpdateClassOutputDto struct {
 	Description   string   `json:"description"`
 	TeacherID     string   `json:"teacher_id"`
 	StudentsIDs   []string `json:"students_ids"`
+	GoogleMeetUrl string   `json:"google_meet_url"`
 }
 
 type UpdateClassUseCase struct {
@@ -34,7 +36,7 @@ func (u *UpdateClassUseCase) Execute(input UpdateClassInputDto) (*UpdateClassOut
 	}
 
 	// Update the existing class with values from the input DTO
-	existingClass.Update(input.TitleOfLesson, input.Description, input.TeacherID)
+	existingClass.Update(input.TitleOfLesson, input.Description, input.TeacherID, input.GoogleMeetUrl)
 	existingClass.StudentsIDs = input.StudentsIDs
 
 	// Save the updated class using the repository
@@ -50,6 +52,7 @@ func (u *UpdateClassUseCase) Execute(input UpdateClassInputDto) (*UpdateClassOut
 		Description:   existingClass.Description,
 		TeacherID:     existingClass.TeacherID,
 		StudentsIDs:   existingClass.StudentsIDs,
+		GoogleMeetUrl: existingClass.GoogleMeetUrl,
 	}
 
 	return outputDto, nil
