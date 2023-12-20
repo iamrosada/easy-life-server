@@ -174,7 +174,6 @@ func (p *StudentHandlers) GetStudentByEventIDHandler(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, output)
 
-	c.JSON(http.StatusOK, gin.H{"message": "Event found with all students successfully"})
 }
 func (p *StudentHandlers) GetStudentsUsingTeacherIDHandler(c *gin.Context) {
 
