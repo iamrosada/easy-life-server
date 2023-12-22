@@ -3,5 +3,6 @@ go 1.21.1
 use (
 	./class-service
 	./user-service
+	./video-service
 
 )
